@@ -1,0 +1,28 @@
+@page
+@model WowAhMonitor.Pages.IndexModel
+
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <link rel="stylesheet" type="text/css" href="~/css/index.css">
+    <title>Index</title>
+</head>
+<body>
+<div>
+    <h1 class="message">@Model.Message</h1>
+    <ul>
+        @foreach (var Realm in Model.Realms)
+        {
+            <li>
+                <a href="@(Realm + "&locale=en_US&access_token=USh7QXy53UPkwCA7oZ9p9BLC4Orr5KvugE")">@Realm</a>
+            </li>
+        }
+    </ul>
+</div>
+</body>
+</html>
