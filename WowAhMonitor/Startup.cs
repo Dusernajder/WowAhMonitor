@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using WowAhMonitor.Services;
@@ -13,6 +14,8 @@ namespace WowAhMonitor
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddScoped<IBlizzardApiService, BlizzardApiService>();
+            services.AddScoped<IBlizzardOAuth2Service, BlizzardOAuth2Service>();
+            services.AddTransient<IBlizzardOAuth2Service, BlizzardOAuth2Service>();
             services.AddHttpClient();
             services.AddRazorPages();
         }
