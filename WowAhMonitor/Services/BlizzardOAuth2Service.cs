@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
@@ -7,8 +6,8 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using QuickType;
-using WowAhMonitor.Models;
-using WowAhMonitor.Settings;
+using Settings;
+
 
 namespace WowAhMonitor.Services
 {
@@ -25,11 +24,17 @@ namespace WowAhMonitor.Services
 
         public async Task<AccessTokenCredentialsResponse> GetToken()
         {
+            var uri = _blizzardApiSettings.Links.WowApi;
+            Console.WriteLine(uri);
             using var client = _clientFactory.CreateClient();
-            var request = new HttpRequestMessage(new HttpMethod("POST"), "https://eu.battle.net/oauth/token");
+            var request = new HttpRequestMessage(
+                new HttpMethod("POST"),
+                String.Format(_blizzardApiSettings.Links.WowApi, "eu")
+            );
             var base64Authorization =
-                Convert.ToBase64String(
-                    Encoding.ASCII.GetBytes("8cc2844e88424060b0a928ffd1576446:MbBIJQwehWOavVOVIG3sXYE4GFHwsrTB"));
+                Convert.ToBase64String(Encoding.ASCII.GetBytes(
+                        $"{_blizzardApiSettings.ClientInfo.ClientId}:{_blizzardApiSettings.ClientInfo.ClientSecret}")
+                );
             request.Headers.TryAddWithoutValidation("Authorization", $"Basic {base64Authorization}");
 
             request.Content = new StringContent("grant_type=client_credentials");
