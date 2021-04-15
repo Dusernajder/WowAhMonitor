@@ -24,8 +24,8 @@ namespace WowAhMonitor
         {
 
             services.Configure<BlizzardApiSettings>(Configuration.GetSection("BlizzardApiSettings"));
+            services.AddSingleton<IBlizzardOAuth2Service, BlizzardOAuth2Service>();
             services.AddScoped<IBlizzardApiService, BlizzardApiService>();
-            services.AddScoped<IBlizzardOAuth2Service, BlizzardOAuth2Service>();
             services.AddRazorPages();
             services.AddHttpClient();
         }
