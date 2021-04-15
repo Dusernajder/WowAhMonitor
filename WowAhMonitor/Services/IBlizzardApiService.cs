@@ -7,6 +7,6 @@ namespace WowAhMonitor.Services
     public interface IBlizzardApiService
     {
         public Task<ConnectedRealmsResponse> GetRealmsLinksAsync();
-        public Task<ConnectedRealmsResponse> GetRealmsDetails(ConnectedRealmsResponse RealmLinks);
+        public Task<ConnectedRealmsResponse> GetRealmsDetailsAsync(ConnectedRealmsResponse realmLinks);
     }
 }
