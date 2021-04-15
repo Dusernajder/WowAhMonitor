@@ -21,7 +21,7 @@ namespace Settings
 
     public partial class Links
     {
-        [JsonProperty("AccessTokenUrl")] public Uri AccessTokenUrl { get; set; }
+        [JsonProperty("AccessTokenUrl")] public string AccessTokenUrl { get; set; }
 
         [JsonProperty("WowApi")] public string WowApi { get; set; }
     }
