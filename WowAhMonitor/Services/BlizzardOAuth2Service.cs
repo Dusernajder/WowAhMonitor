@@ -24,19 +24,15 @@ namespace WowAhMonitor.Services
 
         public async Task<AccessTokenCredentialsResponse> GetToken()
         {
-            var uri = _blizzardApiSettings.Links.WowApi;
-            Console.WriteLine(uri);
+            var uri = String.Format(_blizzardApiSettings.Links.AccessTokenUrl, "eu");
             using var client = _clientFactory.CreateClient();
-            var request = new HttpRequestMessage(
-                new HttpMethod("POST"),
-                String.Format(_blizzardApiSettings.Links.WowApi, "eu")
-            );
+            var request = new HttpRequestMessage(new HttpMethod("POST"), uri);
             var base64Authorization =
                 Convert.ToBase64String(Encoding.ASCII.GetBytes(
-                        $"{_blizzardApiSettings.ClientInfo.ClientId}:{_blizzardApiSettings.ClientInfo.ClientSecret}")
+                    $"{_blizzardApiSettings.ClientInfo.ClientId}:{_blizzardApiSettings.ClientInfo.ClientSecret}")
                 );
-            request.Headers.TryAddWithoutValidation("Authorization", $"Basic {base64Authorization}");
 
+            request.Headers.TryAddWithoutValidation("Authorization", $"Basic {base64Authorization}");
             request.Content = new StringContent("grant_type=client_credentials");
             request.Content.Headers.ContentType = MediaTypeHeaderValue.Parse("application/x-www-form-urlencoded");
 
