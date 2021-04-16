@@ -1,7 +1,9 @@
 using System;
 using System.Net.Http;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
+using Settings;
 using WowAhMonitor.Models;
 
 namespace WowAhMonitor.Services
@@ -9,29 +11,33 @@ namespace WowAhMonitor.Services
     public class BlizzardApiService : IBlizzardApiService
     {
         private readonly IHttpClientFactory _clientFactory;
+        private readonly BlizzardApiSettings _blizzardApiSettings;
+        private readonly IBlizzardOAuth2Service _auth2Service;
 
-        /** for development */
-        private readonly string _token = "&access_token=US8gBgbylAiRXpMor3U7bXZ7UaqaesCV0e";
-
-        public BlizzardApiService(IHttpClientFactory clientFactory)
+        public BlizzardApiService(IHttpClientFactory clientFactory, IOptions<BlizzardApiSettings> settings,
+            IBlizzardOAuth2Service auth2Service)
         {
             _clientFactory = clientFactory;
+            _auth2Service = auth2Service;
+            _blizzardApiSettings = settings.Value;
         }
 
         public async Task<ConnectedRealmsResponse> GetRealmsLinksAsync()
         {
-            var url =
-                "https://eu.api.blizzard.com/data/wow/connected-realm/index?namespace=dynamic-eu&locale=en_US" + _token;
+            var regionUrl = String.Format(_blizzardApiSettings.Links.WowApi, "eu");
+            var token = _auth2Service.GetToken().Result.AccessToken;
+            var url = $"{regionUrl}connected-realm/index?namespace=dynamic-eu&locale=en_US&access_token={token}";
+            Console.WriteLine(url);
             var textResult = await SendRequestToBlizzardApi(url);
             var result = JsonConvert.DeserializeObject<ConnectedRealmsResponse>(textResult);
             return result;
         }
 
-        public async Task<ConnectedRealmsResponse> GetRealmsDetails(ConnectedRealmsResponse RealmLinks)
+        public async Task<ConnectedRealmsResponse> GetRealmsDetailsAsync(ConnectedRealmsResponse realmLinks)
         {
-            foreach (var selfUri in RealmLinks.ConnectedRealms)
+            foreach (var selfUri in realmLinks.ConnectedRealms)
             {
-                var textResult = await SendRequestToBlizzardApi(selfUri.Href + "&locale=en_US" + _token);
+                var textResult = await SendRequestToBlizzardApi(selfUri.Href + "&locale=en_US");
                 Console.WriteLine(textResult);
                 Console.WriteLine();
             }
@@ -39,14 +45,14 @@ namespace WowAhMonitor.Services
             return null;
         }
 
-        public Task<string> GetOAuthAccessToken()
+        private Task<string> GetOAuth2AccessToken()
         {
             throw new NotImplementedException();
         }
 
         private async Task<string> SendRequestToBlizzardApi(string url)
         {
-            var client = _clientFactory.CreateClient();
+            using var client = _clientFactory.CreateClient();
             var uri = new Uri(url);
             var response = await client.SendAsync(new HttpRequestMessage {RequestUri = uri, Method = HttpMethod.Get});
             var textResult = await response.Content.ReadAsStringAsync();
