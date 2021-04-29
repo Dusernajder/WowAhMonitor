@@ -5,12 +5,12 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <Folder Include="Views" />
+      <PackageReference Include="Json.Net" Version="1.0.25" />
+      <PackageReference Include="Newtonsoft.Json" Version="13.0.1-beta1" />
     </ItemGroup>
 
     <ItemGroup>
-      <PackageReference Include="Json.Net" Version="1.0.25" />
-      <PackageReference Include="Newtonsoft.Json" Version="13.0.1-beta1" />
+      <Folder Include="wwwroot\js" />
     </ItemGroup>
 
 </Project>
