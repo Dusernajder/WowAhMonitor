@@ -6,7 +6,7 @@ namespace WowAhMonitor.Services
 {
     public interface IBlizzardOAuth2Service
     {
-        public Task<AccessTokenCredentialsResponse> GetToken();
+        public Task<string> GetToken();
         public bool IsTokenValid();
     }
 }
