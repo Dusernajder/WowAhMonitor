@@ -25,9 +25,8 @@ namespace WowAhMonitor.Services
         public async Task<ConnectedRealmsResponse> GetRealmsLinksAsync()
         {
             var regionUrl = String.Format(_blizzardApiSettings.Links.WowApi, "eu");
-            var token = _auth2Service.GetToken().Result.AccessToken;
+            var token = await _auth2Service.GetToken();
             var url = $"{regionUrl}connected-realm/index?namespace=dynamic-eu&locale=en_US&access_token={token}";
-            Console.WriteLine(url);
             var textResult = await SendRequestToBlizzardApi(url);
             var result = JsonConvert.DeserializeObject<ConnectedRealmsResponse>(textResult);
             return result;
