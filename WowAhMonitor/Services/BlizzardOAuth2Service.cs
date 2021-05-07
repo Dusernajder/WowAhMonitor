@@ -8,7 +8,7 @@ using Newtonsoft.Json;
 using QuickType;
 using Settings;
 using WowAhMonitor.Settings;
-using Region = WowAhMonitor.Models.Region;
+using Region = WowAhMonitor.Settings.Region;
 
 
 namespace WowAhMonitor.Services
