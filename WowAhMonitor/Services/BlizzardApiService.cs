@@ -5,6 +5,8 @@ using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using Settings;
 using WowAhMonitor.Models;
+using WowAhMonitor.Settings;
+using Region = WowAhMonitor.Settings.Region;
 
 namespace WowAhMonitor.Services
 {
@@ -24,8 +26,9 @@ namespace WowAhMonitor.Services
 
         public async Task<ConnectedRealmsResponse> GetRealmsLinksAsync()
         {
-            var regionUrl = String.Format(_blizzardApiSettings.Links.WowApi, "eu");
+            var regionUrl = _blizzardApiSettings.Links.WowApi.SetUriRegion(Region.Europe);
             var token = await _auth2Service.GetToken();
+            // todo: method for build urls
             var url = $"{regionUrl}connected-realm/index?namespace=dynamic-eu&locale=en_US&access_token={token}";
             var textResult = await SendRequestToBlizzardApi(url);
             var result = JsonConvert.DeserializeObject<ConnectedRealmsResponse>(textResult);
@@ -42,11 +45,6 @@ namespace WowAhMonitor.Services
             }
 
             return null;
-        }
-
-        private Task<string> GetOAuth2AccessToken()
-        {
-            throw new NotImplementedException();
         }
 
         private async Task<string> SendRequestToBlizzardApi(string url)
