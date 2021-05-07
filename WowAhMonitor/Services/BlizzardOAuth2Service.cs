@@ -7,6 +7,8 @@ using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using QuickType;
 using Settings;
+using WowAhMonitor.Settings;
+using Region = WowAhMonitor.Settings.Region;
 
 
 namespace WowAhMonitor.Services
@@ -27,7 +29,7 @@ namespace WowAhMonitor.Services
         {
             if (_tokenCredentialsResponse == null || !IsTokenValid())
             {
-                var uri = String.Format(_blizzardApiSettings.Links.AccessTokenUrl, "eu");
+                var uri = _blizzardApiSettings.Links.AccessTokenUrl.SetUriRegion(Region.Europe);
                 using var client = _clientFactory.CreateClient();
                 var request = new HttpRequestMessage(new HttpMethod("POST"), uri);
                 var base64Authorization =
@@ -44,17 +46,18 @@ namespace WowAhMonitor.Services
                 _tokenCredentialsResponse = JsonConvert.DeserializeObject<AccessTokenCredentialsResponse>(textResult);
             }
 
-            return _tokenCredentialsResponse.AccessToken;
+            return _tokenCredentialsResponse == null
+                ? throw new Exception("Blizzard Api is not available")
+                : _tokenCredentialsResponse.AccessToken;
         }
 
         public bool IsTokenValid()
         {
             var tokenTimeStamp = _tokenCredentialsResponse.ExpiresIn;
-            DateTime currentTime = DateTime.Now;
+            var currentTime = DateTime.Now;
             var tokenTimeExpires = currentTime.AddSeconds(tokenTimeStamp).ToLocalTime();
             if (currentTime < tokenTimeExpires)
             {
-                Console.WriteLine($"Expires at: {tokenTimeExpires}");
                 return true;
             }
 

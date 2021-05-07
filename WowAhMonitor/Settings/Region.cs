@@ -8,6 +8,6 @@ namespace WowAhMonitor.Settings
         public static string Europe { get; } = "eu";
         public static string Usa { get; } = "us";
 
-        public static string SetUriRegion(string url, string region) => string.Format(url, region);
+        public static string SetUriRegion(this string url, string region) => string.Format(url, region);
     }
 }
